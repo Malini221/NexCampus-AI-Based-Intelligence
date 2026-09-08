@@ -663,9 +663,3 @@ Planned improvements include:
 * Preventive-maintenance recommendations
 
 The long-term goal is to move from simply responding to complaints toward **predicting and preventing recurring campus problems**.
-
----
-
-# 17. Keywords
-
-`AI` `NLP` `BERT` `Sentence-BERT` `Semantic Similarity` `pgvector` `Incident Clustering` `Risk Assessment` `Recurrence Mining` `Explainable AI` `Smart Campus` `Tanglish` `Hinglish` `Preventive Maintenance`
