@@ -1,6 +1,6 @@
 from typing import Any
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Header, HTTPException
 from pydantic import BaseModel, Field
 
 from .auth import get_db, get_profile, require_user
@@ -36,25 +36,16 @@ def signup(payload: SignupRequest) -> dict[str, Any]:
     if payload.residence_type not in (None, "hosteller", "dayscholar"):
         raise HTTPException(status_code=422, detail="Invalid residence type")
 
-    db = get_db()
     try:
-        response = db.auth.sign_up({
+        response = get_db().auth.sign_up({
             "email": email,
             "password": payload.password,
-            "options": {
-                "data": {
-                    "full_name": payload.full_name.strip(),
-                    "student_id": payload.student_id,
-                    "department": payload.department,
-                    "program": payload.program,
-                    "year": payload.year,
-                    "section": payload.section,
-                    "residence_type": payload.residence_type,
-                    "residence": payload.residence,
-                    "room": payload.room,
-                    "bus_number": payload.bus_number,
-                }
-            },
+            "options": {"data": {
+                "full_name": payload.full_name.strip(), "student_id": payload.student_id,
+                "department": payload.department, "program": payload.program, "year": payload.year,
+                "section": payload.section, "residence_type": payload.residence_type,
+                "residence": payload.residence, "room": payload.room, "bus_number": payload.bus_number,
+            }},
         })
     except Exception as exc:
         message = str(exc).lower()
@@ -68,7 +59,6 @@ def signup(payload: SignupRequest) -> dict[str, Any]:
     session = getattr(response, "session", None)
     if not user:
         raise HTTPException(status_code=400, detail="Unable to create account")
-
     return {
         "user": {"id": user.id, "email": user.email},
         "access_token": getattr(session, "access_token", None) if session else None,
@@ -80,9 +70,8 @@ def signup(payload: SignupRequest) -> dict[str, Any]:
 @router.post("/login")
 def login(payload: LoginRequest) -> dict[str, Any]:
     email = payload.email.strip().lower()
-    db = get_db()
     try:
-        response = db.auth.sign_in_with_password({"email": email, "password": payload.password})
+        response = get_db().auth.sign_in_with_password({"email": email, "password": payload.password})
     except Exception as exc:
         raise HTTPException(status_code=401, detail="Invalid email or password") from exc
 
@@ -90,21 +79,16 @@ def login(payload: LoginRequest) -> dict[str, Any]:
     user = getattr(response, "user", None)
     if not session or not user:
         raise HTTPException(status_code=401, detail="Email confirmation may be required before signing in")
-
     profile = get_profile(user.id)
     if not profile.get("is_active", True):
         raise HTTPException(status_code=403, detail="This account is inactive")
-
     return {
-        "access_token": session.access_token,
-        "refresh_token": session.refresh_token,
-        "expires_in": session.expires_in,
-        "user": {"id": user.id, "email": user.email},
-        "profile": profile,
+        "access_token": session.access_token, "refresh_token": session.refresh_token,
+        "expires_in": session.expires_in, "user": {"id": user.id, "email": user.email}, "profile": profile,
     }
 
 
 @router.get("/me")
-def me(authorization: str | None = None) -> dict[str, Any]:
+def me(authorization: str | None = Header(default=None)) -> dict[str, Any]:
     user = require_user(authorization)
     return {"user": user, "profile": get_profile(user["id"])}
