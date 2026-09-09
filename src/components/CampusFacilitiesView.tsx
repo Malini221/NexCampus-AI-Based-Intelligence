@@ -12,7 +12,7 @@ const facilityImages: Record<string, string> = {
   laboratories: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1200&q=85',
   classrooms: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=85',
   canteen: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=85',
-  hostel: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d4?auto=format&fit=crop&w=1200&q=85',
+  hostel: 'https://commons.wikimedia.org/wiki/Special:FilePath/Hostel%20Building%20from%20outside.jpg?width=1200',
   sports: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=85',
   medical: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1200&q=85',
   transport: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=85',
@@ -23,20 +23,40 @@ const facilityImages: Record<string, string> = {
 };
 
 const fallbackFacilityImage = 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=85';
+const fallbackHostelImage = 'https://commons.wikimedia.org/wiki/Special:FilePath/Hostel%20Building.jpg?width=1200';
 
 interface FacilityImageProps {
   facility: Facility;
   className?: string;
 }
 
-const FacilityImage: React.FC<FacilityImageProps> = ({ facility, className = '' }) => (
-  <img
-    src={facilityImages[facility.id] || fallbackFacilityImage}
-    alt={`${facility.name} facility`}
-    loading="lazy"
-    className={`w-full h-full object-cover object-center ${className}`}
-  />
-);
+const FacilityImage: React.FC<FacilityImageProps> = ({ facility, className = '' }) => {
+  const [src, setSrc] = useState(facilityImages[facility.id] || fallbackFacilityImage);
+
+  useEffect(() => {
+    setSrc(facilityImages[facility.id] || fallbackFacilityImage);
+  }, [facility.id]);
+
+  const handleImageError = () => {
+    if (facility.id === 'hostel' && src !== fallbackHostelImage) {
+      setSrc(fallbackHostelImage);
+      return;
+    }
+    if (src !== fallbackFacilityImage) {
+      setSrc(fallbackFacilityImage);
+    }
+  };
+
+  return (
+    <img
+      src={src}
+      alt={`${facility.name} facility`}
+      loading="lazy"
+      onError={handleImageError}
+      className={`w-full h-full object-cover object-center ${className}`}
+    />
+  );
+};
 
 const detailTabs = ['Overview', 'Facilities', 'Location', 'Contact'] as const;
 type DetailTab = (typeof detailTabs)[number];
