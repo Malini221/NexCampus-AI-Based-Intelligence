@@ -45,10 +45,6 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </div>
           <div className="hidden sm:flex items-center gap-2 leading-none mt-1">
-            <span className="font-body-sm text-[12px] text-on-surface-variant font-medium">
-              {userProfile.term}
-            </span>
-            <span className="text-outline text-[10px]">•</span>
             <span className="font-mono-code text-[11px] font-semibold text-on-surface-variant">
               Campus ID {userProfile.studentId}
             </span>
