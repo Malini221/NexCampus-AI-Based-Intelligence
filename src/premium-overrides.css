@@ -25,88 +25,96 @@ main > div {
   padding-inline: clamp(1rem, 2.2vw, 2.75rem);
 }
 
-/* Give the dashboard room to breathe instead of looking like a compressed admin template. */
 main > div > * { min-width: 0; }
 main .gap-2 { gap: 0.625rem; }
 main .gap-3 { gap: 0.875rem; }
 main .gap-4 { gap: 1.125rem; }
 main .gap-5 { gap: 1.5rem; }
 
-/* Cards become calmer, larger and more tactile without changing the color system. */
 main .bg-surface-card {
   border-radius: var(--ui-radius);
   box-shadow: 0 1px 2px rgba(18,35,28,.03), 0 10px 30px rgba(18,35,28,.045);
 }
 
-main button.group {
+/* Dashboard category cards are the large cards; issue-type buttons must stay medium. */
+main button.group.h-36 {
   min-height: 168px;
   padding: 1.1rem;
   border-radius: 16px;
 }
 
-main button.group .w-9.h-9 {
+main button.group.h-36 .w-9.h-9 {
   width: 2.75rem;
   height: 2.75rem;
 }
 
-main button.group .material-symbols-outlined { font-size: 1.25rem !important; }
-main button.group .font-title { font-size: 1rem !important; line-height: 1.3 !important; }
-main button.group p { font-size: .8125rem !important; line-height: 1.4 !important; }
+main button.group.h-36 .material-symbols-outlined { font-size: 1.25rem !important; }
+main button.group.h-36 .font-title { font-size: 1rem !important; line-height: 1.3 !important; }
+main button.group.h-36 p { font-size: .8125rem !important; line-height: 1.4 !important; }
+
+/* Issue-type cards: medium height, comfortable spacing, slightly larger text. */
+main button.group:not(.h-36) {
+  min-height: 0;
+  height: auto;
+  padding: .85rem 1rem;
+  border-radius: 12px;
+}
+main button.group:not(.h-36) .font-body-md {
+  font-size: .9375rem !important;
+  line-height: 1.4 !important;
+}
+
+/* Hide the literal file-input glyph/bracket treatment while keeping file upload clickable. */
+main label:has(input[type="file"]) .material-symbols-outlined { display: none !important; }
 
 /* Responsive category grid: larger cards on wide screens, single-column clarity on phones. */
-main .grid.grid-cols-2.sm\:grid-cols-3.md\:grid-cols-4.lg\:grid-cols-6 {
+main .grid.grid-cols-2.sm\\:grid-cols-3.md\\:grid-cols-4.lg\\:grid-cols-6 {
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 1rem;
 }
 
-/* Remove decorative AI-looking floating/orbit treatment from the auth visual. */
 .scene-orbit, .float-card { display: none !important; }
 
-/* Avoid tiny decorative glyph-like status text. */
 .risk-eyebrow, .risk-action { font-size: .75rem !important; }
 .risk-title { font-size: 1.05rem !important; }
 .risk-reasons span { font-size: .75rem !important; padding: .45rem .7rem !important; }
 
-/* More substantial page headings. */
 .font-display { line-height: 1.08; }
 .font-headline-lg { line-height: 1.12; }
 .font-headline-sm { line-height: 1.25; }
 
-/* Premium, restrained motion surfaces. */
 main .bg-surface-card,
 main button.group,
 main [role="button"] {
   transition: transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s ease, border-color .22s ease;
 }
 
-main button.group:hover {
+main button.group.h-36:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 22px rgba(18,35,28,.07), 0 18px 42px rgba(18,35,28,.055);
 }
 
-/* Tablet */
 @media (max-width: 1199px) {
-  main .grid.grid-cols-2.sm\:grid-cols-3.md\:grid-cols-4.lg\:grid-cols-6 {
+  main .grid.grid-cols-2.sm\\:grid-cols-3.md\\:grid-cols-4.lg\\:grid-cols-6 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
-/* Mobile */
 @media (max-width: 767px) {
   main > div { padding-inline: 1rem !important; }
-  main .grid.grid-cols-2.sm\:grid-cols-3.md\:grid-cols-4.lg\:grid-cols-6 {
+  main .grid.grid-cols-2.sm\\:grid-cols-3.md\\:grid-cols-4.lg\\:grid-cols-6 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: .75rem;
   }
-  main button.group { min-height: 154px; padding: .9rem; }
+  main button.group.h-36 { min-height: 154px; padding: .9rem; }
   main .bg-surface-card { border-radius: 14px; }
 }
 
 @media (max-width: 430px) {
-  main .grid.grid-cols-2.sm\:grid-cols-3.md\:grid-cols-4.lg\:grid-cols-6 {
+  main .grid.grid-cols-2.sm\\:grid-cols-3.md\\:grid-cols-4.lg\\:grid-cols-6 {
     grid-template-columns: 1fr;
   }
-  main button.group { min-height: 132px; }
+  main button.group.h-36 { min-height: 132px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
