@@ -24,7 +24,6 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <header className="fixed top-0 left-0 lg:left-64 xl:left-72 right-0 h-16 bg-surface-card border-b border-border-subtle z-40 px-4 sm:px-6 shadow-xs flex items-center justify-between gap-4">
-      {/* Mobile Menu Button + Greeting */}
       <div className="flex items-center gap-3 min-w-0">
         <button
           type="button"
@@ -57,7 +56,6 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Global Search Bar */}
       <div className="flex-1 max-w-xl mx-2 sm:mx-4">
         <div className="relative flex items-center">
           <span className="material-symbols-outlined absolute left-3 text-[18px] text-outline pointer-events-none">
@@ -68,22 +66,14 @@ export const Header: React.FC<HeaderProps> = ({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onClick={onOpenSearch}
-            placeholder="Search reports, categories, facilities (⌘K)..."
-            className="w-full h-9 sm:h-10 pl-9 pr-12 rounded-xl bg-surface-card border border-border-subtle hover:border-border-hover focus:outline-none focus:ring-2 focus:ring-primary font-body-md text-xs text-on-surface placeholder:text-outline shadow-xs transition-all duration-150"
+            placeholder="Search"
+            aria-label="Search"
+            className="w-full h-9 sm:h-10 pl-9 pr-3 rounded-xl bg-surface-card border border-border-subtle hover:border-border-hover focus:outline-none focus:ring-2 focus:ring-primary font-body-md text-xs text-on-surface placeholder:text-outline shadow-xs transition-all duration-150"
           />
-          <button
-            type="button"
-            onClick={onOpenSearch}
-            className="absolute right-2 px-1.5 py-0.5 rounded font-mono-code text-[10px] font-semibold bg-surface-container text-on-surface-variant border border-border-subtle cursor-pointer hover:bg-surface-container-high transition-colors"
-          >
-            ⌘K
-          </button>
         </div>
       </div>
 
-      {/* Right Controls */}
       <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
-        {/* Notification Bell */}
         <button
           type="button"
           onClick={onOpenNotifications}
@@ -96,7 +86,6 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </button>
 
-        {/* User Pill */}
         <div
           onClick={onOpenSettings}
           className="flex items-center gap-2 pl-2 sm:pl-3 border-l border-border-subtle cursor-pointer group"
