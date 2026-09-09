@@ -30,33 +30,14 @@ export type LoginResponse = {
 };
 
 export type SignupPayload = {
-  email: string;
-  password: string;
-  full_name: string;
-  student_id?: string;
-  department?: string;
-  program?: string;
-  year?: number;
-  section?: string;
-  residence_type?: string;
-  residence?: string;
-  room?: string;
-  bus_number?: string;
+  email: string; password: string; full_name: string; student_id?: string;
+  department?: string; program?: string; year?: number; section?: string;
+  residence_type?: string; residence?: string; room?: string; bus_number?: string;
 };
 
-function getToken() {
-  return localStorage.getItem(ACCESS_TOKEN_KEY);
-}
-
-export function hasSession() {
-  return Boolean(getToken());
-}
-
-export function clearSession() {
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
-  localStorage.removeItem(REFRESH_TOKEN_KEY);
-}
-
+function getToken() { return localStorage.getItem(ACCESS_TOKEN_KEY); }
+export function hasSession() { return Boolean(getToken()); }
+export function clearSession() { localStorage.removeItem(ACCESS_TOKEN_KEY); localStorage.removeItem(REFRESH_TOKEN_KEY); }
 function saveSession(accessToken: string, refreshToken?: string) {
   localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
   if (refreshToken) localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
@@ -67,11 +48,9 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   headers.set('Content-Type', 'application/json');
   const token = getToken();
   if (token) headers.set('Authorization', `Bearer ${token}`);
-
   const response = await fetch(`${API_BASE_URL}${path}`, { ...options, headers });
   const contentType = response.headers.get('content-type') || '';
   const body = contentType.includes('application/json') ? await response.json() : await response.text();
-
   if (!response.ok) {
     if (response.status === 401) clearSession();
     const detail = typeof body === 'object' && body?.detail ? body.detail : 'Request failed. Please try again.';
@@ -81,49 +60,22 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 export async function login(email: string, password: string) {
-  const result = await request<LoginResponse>('/auth/login', {
-    method: 'POST', body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
-  });
-  saveSession(result.access_token, result.refresh_token);
-  return result;
+  const result = await request<LoginResponse>('/auth/login', { method: 'POST', body: JSON.stringify({ email: email.trim().toLowerCase(), password }) });
+  saveSession(result.access_token, result.refresh_token); return result;
 }
-
 export async function signup(payload: SignupPayload) {
-  const result = await request<{ access_token: string | null; refresh_token: string | null; requires_email_confirmation: boolean; user: { id: string; email: string } }>('/auth/signup', {
-    method: 'POST', body: JSON.stringify(payload),
-  });
-  if (result.access_token) saveSession(result.access_token, result.refresh_token || undefined);
-  return result;
+  const result = await request<{ access_token: string | null; refresh_token: string | null; requires_email_confirmation: boolean; user: { id: string; email: string } }>('/auth/signup', { method: 'POST', body: JSON.stringify(payload) });
+  if (result.access_token) saveSession(result.access_token, result.refresh_token || undefined); return result;
 }
-
-export async function getCurrentUser() {
-  return request<{ user: { id: string; email: string }; profile: AuthProfile }>('/auth/me');
-}
-
-export async function logout() {
-  clearSession();
-}
-
-export async function getCategories() {
-  return request<Array<{ id: string; key: string; name: string; icon?: string; subtitle?: string; question?: string; private_reporting: boolean }>>('/api/categories');
-}
-
-export async function getSubcategories(categoryId: string) {
-  return request<Array<{ id: string; category_id: string; name: string }>>(`/api/categories/${categoryId}/subcategories`);
-}
-
-export async function getMyComplaints() {
-  return request<any[]>('/api/complaints/me');
-}
-
-export async function createComplaint(payload: Record<string, unknown>) {
-  return request<any>('/api/complaints', { method: 'POST', body: JSON.stringify(payload) });
-}
-
-export async function analyzeComplaint(id: string) {
-  return request<any>(`/api/complaints/${id}/analyze`, { method: 'POST' });
-}
-
-export async function updateComplaintStatus(id: string, status: string, note?: string) {
-  return request<any>(`/api/complaints/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status, note }) });
-}
+export async function getCurrentUser() { return request<{ user: { id: string; email: string }; profile: AuthProfile }>('/auth/me'); }
+export async function logout() { clearSession(); }
+export async function getCategories() { return request<any[]>('/api/categories'); }
+export async function getSubcategories(categoryId: string) { return request<any[]>(`/api/categories/${categoryId}/subcategories`); }
+export async function getMyComplaints() { return request<any[]>('/api/complaints/me'); }
+export async function getComplaint(id: string) { return request<any>(`/api/complaints/${id}`); }
+export async function createComplaint(payload: Record<string, unknown>) { return request<any>('/api/complaints', { method: 'POST', body: JSON.stringify(payload) }); }
+export async function verifyComplaint(id: string, status = 'Under Review', note?: string) { return request<any>(`/api/complaints/${id}/verify`, { method: 'POST', body: JSON.stringify({ status, note }) }); }
+export async function analyzeComplaint(id: string) { return request<any>(`/api/complaints/${id}/analyze`, { method: 'POST' }); }
+export async function updateComplaintStatus(id: string, status: string, note?: string) { return request<any>(`/api/complaints/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status, note }) }); }
+export async function getNotifications() { return request<any[]>('/api/notifications/me'); }
+export async function markNotificationRead(id: string) { return request<any>(`/api/notifications/${id}/read`, { method: 'PATCH' }); }
