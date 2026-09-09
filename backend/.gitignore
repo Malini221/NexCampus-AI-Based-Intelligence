@@ -1,0 +1,6 @@
+# Backend secrets and local Python environment
+.env
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
