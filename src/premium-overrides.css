@@ -1,78 +1,89 @@
-/* NexCampus premium UI overrides
-   Keeps the existing green/white visual language while fixing the overly compact scale.
+/* NexCampus premium UI refinements
+   Preserve the existing green/white visual language, motion and component identity.
+   These rules only correct scale, spacing, typography and responsiveness.
 */
 
 :root {
   --content-max-width: 1760px;
   --ui-radius: 16px;
+  --page-gutter: clamp(1rem, 2vw, 2rem);
+  --section-gap: clamp(1rem, 1.5vw, 1.5rem);
 }
 
 html { font-size: 16px; }
-body { min-width: 320px; }
+body { min-width: 320px; overflow-x: hidden; }
 
-/* Readable type scale: no microscopic metadata or labels. */
+/* Readable type without changing the existing font family or hierarchy. */
 .text-xs { font-size: 0.8125rem !important; line-height: 1.45 !important; }
 .text-sm { font-size: 0.9375rem !important; line-height: 1.5 !important; }
 [class~="text-[10px]"] { font-size: 0.75rem !important; line-height: 1.4 !important; }
 [class~="text-[11px]"] { font-size: 0.8125rem !important; line-height: 1.45 !important; }
 [class~="text-[12px]"] { font-size: 0.875rem !important; line-height: 1.45 !important; }
-[class~="text-[13px]"] { font-size: 0.875rem !important; }
-[class~="text-[14px]"] { font-size: 0.9375rem !important; }
+[class~="text-[13px]"] { font-size: 0.875rem !important; line-height: 1.45 !important; }
+[class~="text-[14px]"] { font-size: 0.9375rem !important; line-height: 1.5 !important; }
 
+/* Let the existing layout breathe while keeping its original structure. */
 main > div {
   width: min(100%, var(--content-max-width));
   max-width: var(--content-max-width) !important;
-  padding-inline: clamp(1rem, 2.2vw, 2.75rem);
+  padding-inline: var(--page-gutter);
 }
 
-/* Give the dashboard room to breathe instead of looking like a compressed admin template. */
 main > div > * { min-width: 0; }
+main section, main article, main button, main [role="button"] { min-width: 0; }
+
+/* Normalize common gaps slightly instead of allowing very uneven proportions. */
 main .gap-2 { gap: 0.625rem; }
 main .gap-3 { gap: 0.875rem; }
 main .gap-4 { gap: 1.125rem; }
-main .gap-5 { gap: 1.5rem; }
+main .gap-5 { gap: 1.375rem; }
 
-/* Cards become calmer, larger and more tactile without changing the color system. */
+/* Existing cards: same surfaces, softer scale and consistent depth. */
 main .bg-surface-card {
   border-radius: var(--ui-radius);
   box-shadow: 0 1px 2px rgba(18,35,28,.03), 0 10px 30px rgba(18,35,28,.045);
 }
 
+/* Keep the category cards visually recognizable, but let height follow content. */
 main button.group {
-  min-height: 168px;
-  padding: 1.1rem;
+  min-height: 150px;
+  height: auto;
+  padding: clamp(.85rem, 1.1vw, 1.1rem);
   border-radius: 16px;
 }
 
 main button.group .w-9.h-9 {
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 2.625rem;
+  height: 2.625rem;
 }
 
 main button.group .material-symbols-outlined { font-size: 1.25rem !important; }
 main button.group .font-title { font-size: 1rem !important; line-height: 1.3 !important; }
 main button.group p { font-size: .8125rem !important; line-height: 1.4 !important; }
 
-/* Responsive category grid: larger cards on wide screens, single-column clarity on phones. */
-main .grid.grid-cols-2.sm\:grid-cols-3.md\:grid-cols-4.lg\:grid-cols-6 {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1rem;
+/* Category grid adapts by available width instead of forcing oversized/undersized cards. */
+main .grid.grid-cols-2.sm\\:grid-cols-3.md\\:grid-cols-4.lg\\:grid-cols-6 {
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  gap: clamp(.75rem, 1vw, 1rem);
 }
 
-/* Remove decorative AI-looking floating/orbit treatment from the auth visual. */
+/* Prevent long titles/descriptions from distorting card proportions. */
+main button.group .font-title,
+main button.group p { overflow-wrap: anywhere; }
+
+/* Keep decorative auth treatment hidden; preserve the cleaner existing auth composition. */
 .scene-orbit, .float-card { display: none !important; }
 
-/* Avoid tiny decorative glyph-like status text. */
+/* Risk card typography remains compact but readable. */
 .risk-eyebrow, .risk-action { font-size: .75rem !important; }
 .risk-title { font-size: 1.05rem !important; }
 .risk-reasons span { font-size: .75rem !important; padding: .45rem .7rem !important; }
 
-/* More substantial page headings. */
 .font-display { line-height: 1.08; }
 .font-headline-lg { line-height: 1.12; }
 .font-headline-sm { line-height: 1.25; }
 
-/* Premium, restrained motion surfaces. */
+/* Existing motion stays intact; this only makes hover feedback more refined. */
 main .bg-surface-card,
 main button.group,
 main [role="button"] {
@@ -84,29 +95,83 @@ main button.group:hover {
   box-shadow: 0 8px 22px rgba(18,35,28,.07), 0 18px 42px rgba(18,35,28,.055);
 }
 
+/* Dashboard hero and intelligence sections: avoid one child becoming disproportionately tall. */
+main .grid > .lg\\:col-span-7,
+main .grid > .lg\\:col-span-5 { min-width: 0; }
+
+/* Long content inside horizontal rows should shrink instead of forcing overflow. */
+main .flex-row > .min-w-0,
+main .flex.items-center > .min-w-0,
+main .flex.items-start > .min-w-0 { min-width: 0; }
+
+/* Forms: consistent field scale without changing their visual style. */
+main input, main textarea, main select {
+  font-size: .9375rem;
+  line-height: 1.5;
+}
+
+/* Tables/lists stay usable when the viewport is narrower than the desktop design. */
+main table { width: 100%; }
+main [class*="overflow-x-auto"] { scrollbar-width: thin; }
+
 /* Tablet */
 @media (max-width: 1199px) {
-  main .grid.grid-cols-2.sm\:grid-cols-3.md\:grid-cols-4.lg\:grid-cols-6 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  :root { --page-gutter: clamp(1rem, 2.5vw, 1.5rem); }
+
+  main .grid.grid-cols-2.sm\\:grid-cols-3.md\\:grid-cols-4.lg\\:grid-cols-6 {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   }
+
+  main button.group { min-height: 145px; }
+}
+
+/* Small tablets / large phones */
+@media (max-width: 900px) {
+  main > div { padding-inline: 1rem !important; }
+
+  main .grid.grid-cols-1.lg\\:grid-cols-12 {
+    grid-template-columns: 1fr;
+  }
+
+  main .lg\\:col-span-7,
+  main .lg\\:col-span-5 { grid-column: span 1 / span 1; }
 }
 
 /* Mobile */
 @media (max-width: 767px) {
-  main > div { padding-inline: 1rem !important; }
-  main .grid.grid-cols-2.sm\:grid-cols-3.md\:grid-cols-4.lg\:grid-cols-6 {
+  main > div { padding-inline: .875rem !important; }
+
+  main .grid.grid-cols-2.sm\\:grid-cols-3.md\\:grid-cols-4.lg\\:grid-cols-6 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: .75rem;
   }
-  main button.group { min-height: 154px; padding: .9rem; }
+
+  main button.group {
+    min-height: 142px;
+    padding: .85rem;
+  }
+
   main .bg-surface-card { border-radius: 14px; }
+
+  /* Stack compact dashboard controls rather than squeezing them horizontally. */
+  main .flex.sm\\:flex-row { flex-direction: column; align-items: stretch; }
+  main .self-start.sm\\:self-center { align-self: flex-start; }
 }
 
-@media (max-width: 430px) {
-  main .grid.grid-cols-2.sm\:grid-cols-3.md\:grid-cols-4.lg\:grid-cols-6 {
+@media (max-width: 480px) {
+  main .grid.grid-cols-2.sm\\:grid-cols-3.md\\:grid-cols-4.lg\\:grid-cols-6 {
     grid-template-columns: 1fr;
   }
-  main button.group { min-height: 132px; }
+
+  main button.group { min-height: 128px; }
+
+  main h1 { overflow-wrap: anywhere; }
+
+  /* Keep fixed toasts readable without covering the whole screen. */
+  main ~ * .fixed,
+  .fixed.bottom-6.right-6 {
+    max-width: calc(100vw - 2rem);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
