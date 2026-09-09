@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { NavigationTab, TicketReport, UserProfile } from './types';
 import { initialUserProfile, initialTicketReports, initialNotifications } from './data/mockData';
 import { Sidebar } from './components/Sidebar';
@@ -94,10 +94,18 @@ export default function App() {
   const handleUpdateProfile = (updated: Partial<UserProfile>) => setUserProfile((prev) => ({ ...prev, ...updated }));
 
   if (!isAuthenticated) {
-    return <AuthView onAuthenticated={(name) => {
-      setUserProfile((prev) => ({ ...prev, name }));
-      setIsAuthenticated(true);
-    }} />;
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+      >
+        <AuthView onAuthenticated={(name) => {
+          setUserProfile((prev) => ({ ...prev, name }));
+          setIsAuthenticated(true);
+        }} />
+      </motion.div>
+    );
   }
 
   return (
@@ -116,13 +124,24 @@ export default function App() {
         searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <main className="lg:pl-64 pt-16 min-h-screen flex flex-col">
         <div className="flex-1 p-4 sm:p-6 lg:p-7">
-          {activeTab === 'dashboard' && <DashboardView reports={reports} onOpenReportDetails={setSelectedReportForDetail}
-            onNavigateTab={handleNavigateTab} onSubmitNewReport={handleSubmitNewReport} />}
-          {activeTab === 'report-problem' && <ReportProblemView reports={reports} onSubmitNewReport={handleSubmitNewReport} preselectedDomain={preselectedDomain} />}
-          {activeTab === 'facilities' && <CampusFacilitiesView onReportFacilityIssue={handleReportFacilityIssue} />}
-          {activeTab === 'my-reports' && <MyReportsView reports={reports} />}
-          {activeTab === 'feedback' && <FeedbackView />}
-          {activeTab === 'settings' && <SettingsView userProfile={userProfile} onUpdateProfile={handleUpdateProfile} />}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 7 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+              className="w-full"
+            >
+              {activeTab === 'dashboard' && <DashboardView reports={reports} onOpenReportDetails={setSelectedReportForDetail}
+                onNavigateTab={handleNavigateTab} onSubmitNewReport={handleSubmitNewReport} />}
+              {activeTab === 'report-problem' && <ReportProblemView reports={reports} onSubmitNewReport={handleSubmitNewReport} preselectedDomain={preselectedDomain} />}
+              {activeTab === 'facilities' && <CampusFacilitiesView onReportFacilityIssue={handleReportFacilityIssue} />}
+              {activeTab === 'my-reports' && <MyReportsView reports={reports} />}
+              {activeTab === 'feedback' && <FeedbackView />}
+              {activeTab === 'settings' && <SettingsView userProfile={userProfile} onUpdateProfile={handleUpdateProfile} />}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
       <GlobalModals isSosOpen={isSosOpen} onCloseSos={() => setIsSosOpen(false)}
